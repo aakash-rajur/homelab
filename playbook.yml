@@ -1,0 +1,130 @@
+---
+- name: Homelab
+  hosts: homelab
+  vars:
+    homelab_user: "{{ lookup('env', 'HOMELAB_USER') }}"
+    project_dir: "{{ lookup('env', 'PROJECT_DIR') }}"
+    letsencrypt_ca_server: "{{ lookup('env', 'LETSENCRYPT_CA_SERVER') }}"
+    letsencrypt_email_address: "{{ lookup('env', 'LETSENCRYPT_EMAIL_ADDRESS') }}"
+    cloudflare_account_id: "{{ lookup('env', 'CLOUDFLARE_ACCOUNT_ID') }}"
+    cloudflare_account_email_address: "{{ lookup('env', 'CLOUDFLARE_ACCOUNT_EMAIL_ADDRESS') }}"
+    cloudflare_dns_api_token: "{{ lookup('env', 'CLOUDFLARE_DNS_API_TOKEN') }}"
+    cloudflare_tunnel_id: "{{ lookup('env', 'CLOUDFLARE_TUNNEL_ID') }}"
+    cloudflare_tunnel_token: "{{ lookup('env', 'CLOUDFLARE_TUNNEL_TOKEN') }}"
+    root_domain: "{{ lookup('env', 'ROOT_DOMAIN') }}"
+    grafana_user: "{{ lookup('env', 'GRAFANA_USER') }}"
+    grafana_password: "{{ lookup('env', 'GRAFANA_PASSWORD') }}"
+    google_oauth_client_id: "{{ lookup('env', 'GOOGLE_OAUTH_CLIENT_ID') }}"
+    google_oauth_client_secret: "{{ lookup('env', 'GOOGLE_OAUTH_CLIENT_SECRET') }}"
+    super_admin_users: "{{ lookup('env', 'SUPER_ADMIN_USERS') }}"
+    admin_users: "{{ lookup('env', 'ADMIN_USERS') }}"
+    guest_users: "{{ lookup('env', 'GUEST_USERS') }}"
+    project_dirs:
+      - "{{ project_dir }}"
+      - "{{ project_dir }}/cloudflared"
+      - "{{ project_dir }}/letsencrypt"
+      - "{{ project_dir }}/metrics"
+      - "{{ project_dir }}/metrics/dashboards"
+      - "{{ project_dir }}/authentication"
+    project_template_files:
+      - src: "cloudflare/creds.json"
+        dest: "{{ project_dir }}/cloudflared/creds.json"
+      - src: "cloudflare/dnsconfig.js"
+        dest: "{{ project_dir }}/cloudflared/dnsconfig.js"
+      - src: "metrics/cadvisor-profile.json"
+        dest: "{{ project_dir }}/metrics/cadvisor-profile.json"
+      - src: "metrics/prometheus.yml"
+        dest: "{{ project_dir }}/metrics/prometheus.yml"
+      - src: "metrics/grafana.yml"
+        dest: "{{ project_dir }}/metrics/grafana.yml"
+      - src: "metrics/grafana.ini"
+        dest: "{{ project_dir }}/metrics/grafana.ini"
+      - src: "metrics/dashboard.yml"
+        dest: "{{ project_dir }}/metrics/dashboards/dashboard.yml"
+      - src: "authentication/auth.ini"
+        dest: "{{ project_dir }}/authentication/config.ini"
+      - src: "docker-compose.yml"
+        dest: "{{ project_dir }}/docker-compose.yml"
+    grafana_dashboards:
+      - url: "https://grafana.com/api/dashboards/17346/revisions/9/download"
+        dest: "{{ project_dir }}/metrics/dashboards/traefik.json"
+        type: "url"
+      - url: "https://raw.githubusercontent.com/containrrr/watchtower/76f9cea516593fabb8ca91ff13de55caa6aa0a8b/grafana/dashboards/dashboard.json"
+        dest: "{{ project_dir }}/metrics/dashboards/watchtower.json"
+        type: "url"
+      - src: "metrics/docker-and-host-monitoring.json"
+        dest: "{{ project_dir }}/metrics/dashboards/docker-and-host-monitoring.json"
+        type: "local"
+    credentials:
+      - name: "watchtower_api_token"
+        value: "{{ lookup('password', './credentials/watchtower_api_token length=16 chars=ascii_letters') }}"
+      - name: "auth_secret"
+        value: "{{ lookup('password', './credentials/auth_secret length=32 chars=ascii_letters') }}"
+  tasks:
+    - name: ping
+      ping:
+    - name: generate credentials
+      set_fact:
+        "{{ item.name }}": "{{ item.value }}"
+      loop: "{{ credentials }}"
+    - name: create project directories
+      file:
+        path: "{{ item }}"
+        state: "directory"
+      loop: "{{ project_dirs }}"
+      when: state == "present"
+    - name: push files
+      template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+      loop: "{{ project_template_files }}"
+      when: state == "present"
+    - name: download grafana dashboards
+      get_url:
+        url: "{{ item.url }}"
+        dest: "{{ item.dest }}"
+      loop: "{{ grafana_dashboards }}"
+      when: (state == "present") and (item.type == "url")
+    - name: copy grafana dashboards
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+      loop: "{{ grafana_dashboards }}"
+      when: (state == "present") and (item.type == "local")
+    - name: copy systemd service file
+      template:
+        src: "homelab.service"
+        dest: "/etc/systemd/system/homelab.service"
+      become: yes
+      when: state == "present"
+    - name: reload systemd
+      systemd:
+        name: "homelab"
+        daemon_reload: true
+        state: "reloaded"
+      become: yes
+      when: state == "present"
+    - name: check homelab service file exists
+      stat:
+        path: "/etc/systemd/system/homelab.service"
+      register: homelab_service_file_exists
+    - name: stop homelab
+      systemd:
+        name: "homelab"
+        daemon_reload: true
+        state: "stopped"
+      become: yes
+      become_user: root
+      when: state == "absent" and homelab_service_file_exists.stat.exists
+    - name: delete systemd service file
+      file:
+        path: "/etc/systemd/system/homelab.service"
+        state: "absent"
+      become: yes
+      when: state == "absent" and homelab_service_file_exists.stat.exists
+    - name: delete project
+      file:
+        path: "{{ project_dirs[0] }}"
+        state: "absent"
+      when: state == "absent"
+      become: yes

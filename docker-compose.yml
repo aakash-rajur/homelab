@@ -1,0 +1,216 @@
+name: homelab
+
+services:
+  dns:
+    image: "ghcr.io/stackexchange/dnscontrol"
+    container_name: "dns"
+    command:
+      - "push"
+    volumes:
+      - "{{ project_dir }}/cloudflared:/dns"
+  traefik:
+    image: "traefik"
+    container_name: "traefik"
+    command:
+      - "--log.level=INFO"
+      - "--log.format=json"
+      - "--log.nocolor=true"
+      - "--ping=true"
+      - "--accesslog=true"
+      - "--accesslog.addinternals=true"
+      - "--accesslog.format=json"
+      - "--metrics.prometheus=true"
+      - "--metrics.prometheus.addEntryPointsLabels=true"
+      - "--metrics.prometheus.addrouterslabels=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--certificatesresolvers.letsencrypt.acme.caserver={{ letsencrypt_ca_server }}"
+      - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare"
+      - "--certificatesresolvers.letsencrypt.acme.email={{ letsencrypt_email_address }}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.http.tls=true"
+      - "--entrypoints.websecure.http.tls.certResolver=letsencrypt"
+      - "--entrypoints.websecure.http.tls.domains[0].main={{ root_domain }}"
+      - "--entrypoints.websecure.http.tls.domains[0].sans=*.{{ root_domain }}"
+#      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+#      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+    environment:
+      - "CLOUDFLARE_EMAIL={{ cloudflare_account_email_address }}"
+      - "CLOUDFLARE_DNS_API_TOKEN={{ cloudflare_dns_api_token }}"
+    labels:
+      - "traefik.tls.stores.default.defaultgeneratedcert.resolver=letsencrypt"
+      - "traefik.tls.stores.default.defaultgeneratedcert.domain.main={{ root_domain }}"
+      - "traefik.tls.stores.default.defaultgeneratedcert.domain.sans=*.{{ root_domain }}"
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.{{ root_domain }}`)"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.middlewares=strip"
+      - "traefik.http.middlewares.strip.stripprefix.prefixes=/traefik"
+    expose:
+      - "80"
+      - "443"
+      - "8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+#      - "/tmp/letsencrypt:/letsencrypt"
+      - "{{ project_dir }}/letsencrypt:/letsencrypt"
+    networks:
+      default:
+        aliases:
+          - "traefik"
+          - "{{ root_domain }}"
+    healthcheck:
+      test: [ "CMD", "traefik", "healthcheck", "--ping" ]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+  tunnel:
+    image: "sidevesh/cloudflared"
+    container_name: "tunnel"
+    command:
+      - "tunnel"
+      - "--no-autoupdate"
+      - "--metrics"
+      - "localhost:3333"
+      - "run"
+      - "{{ cloudflare_tunnel_id }}"
+    environment:
+      - "TUNNEL_TOKEN={{ cloudflare_tunnel_token }}"
+    volumes:
+      - "{{ project_dir }}/cloudflared:/etc/cloudflared"
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "http://localhost:3333/ready" ]
+      interval: 60s
+      timeout: 10s
+      start_period: 10s
+    restart: unless-stopped
+    depends_on:
+      traefik:
+        condition: service_healthy
+  auth:
+    image: "thomseddon/traefik-forward-auth"
+    container_name: "auth"
+    command:
+      - "--log-level=debug"
+      - "--log-format=json"
+      - "--config=/config/config.ini"
+      - "--match-whitelist-or-domain"
+    environment:
+      - "PROVIDERS_GOOGLE_CLIENT_ID={{ google_oauth_client_id }}"
+      - "PROVIDERS_GOOGLE_CLIENT_SECRET={{ google_oauth_client_secret }}"
+      - "SECRET={{ auth_secret }}"
+      - "INSECURE_COOKIE=false"
+      - "AUTH_HOST=auth.{{ root_domain }}:443"
+      - "COOKIE_DOMAIN={{ root_domain }}"
+    volumes:
+      - "{{ project_dir }}/authentication:/config"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.auth.rule=Host(`auth.{{ root_domain }}`)"
+      - "traefik.http.routers.auth.entrypoints=websecure"
+      - "traefik.http.routers.auth.service=auth"
+      - "traefik.http.services.auth.loadbalancer.server.port=4181"
+      - "traefik.http.routers.auth.tls=true"
+      - "traefik.http.middlewares.auth.forwardauth.address=http://auth:4181"
+      - "traefik.http.middlewares.auth.forwardauth.authResponseHeaders=X-Forwarded-User"
+      - "traefik.http.services.auth.loadbalancer.server.port=4181"
+  watchtower:
+    image: "containrrr/watchtower"
+    container_name: "watchtower"
+    command:
+      - "--http-api-metrics"
+      - "--include-restarting"
+      - "--http-api-token={{ watchtower_api_token }}"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/usr/bin/curl:/usr/bin/curl"
+  nodeexporter:
+    image: "prom/node-exporter"
+    container_name: "nodeexporter"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9100/" ]
+    restart: unless-stopped
+  cadvisor:
+    image: "gcr.io/cadvisor/cadvisor"
+    container_name: "cadvisor"
+    command:
+      - "-housekeeping_interval=10s"
+      - "-store_container_labels=false"
+    volumes:
+      - "/:/rootfs:ro"
+      - "/var/run:/var/run:ro"
+      - "/sys:/sys:ro"
+      - "/var/lib/docker/:/var/lib/docker:ro"
+      - "/dev/disk/:/dev/disk:ro"
+    devices:
+      - "/dev/kmsg:/dev/kmsg"
+    security_opt:
+      - "seccomp=metrics/cadvisor-profile.json"
+  prometheus:
+    image: "prom/prometheus"
+    container_name: "prometheus"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-lifecycle'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - "{{ project_dir }}/metrics:/etc/prometheus"
+      - "prometheus:/prometheus"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prometheus.rule=Host(`prometheus.{{ root_domain }}`)"
+      - "traefik.http.routers.prometheus.entrypoints=websecure"
+      - "traefik.http.routers.prometheus.service=prometheus"
+      - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
+      - "traefik.http.routers.prometheus.tls=true"
+      - "traefik.http.routers.prometheus.middlewares=auth@docker"
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/-/healthy" ]
+    restart: always
+  grafana:
+    image: "grafana/grafana"
+    container_name: "grafana"
+    command:
+      - "--config=/etc/grafana/provisioning/configs/grafana.ini"
+    volumes:
+      - "grafana:/var/lib/grafana"
+      - "{{ project_dir }}/metrics/grafana.yml:/etc/grafana/provisioning/datasources/datasources.yml"
+      - "{{ project_dir }}/metrics/grafana.ini:/etc/grafana/provisioning/configs/grafana.ini"
+      - "{{ project_dir }}/metrics/dashboards:/etc/grafana/provisioning/dashboards"
+    environment:
+      - "GF_USERS_ALLOW_SIGN_UP=false"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.{{ root_domain }}`)"
+      - "traefik.http.routers.grafana.entrypoints=websecure"
+      - "traefik.http.routers.grafana.service=grafana"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      - "traefik.http.routers.grafana.tls=true"
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health" ]
+    restart: unless-stopped
+    depends_on:
+      prometheus:
+        condition: service_started
+
+volumes:
+  prometheus: { }
+  grafana: { }

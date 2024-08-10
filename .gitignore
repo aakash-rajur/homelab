@@ -1,0 +1,6 @@
+.envrc.local
+credentials/*
+!credentials/.gitkeep
+authentication/users.yml
+backups
+.idea
