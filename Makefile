@@ -5,13 +5,19 @@ RESET  := $(shell tput -Txterm sgr0)
 .DEFAULT_GOAL := help
 
 ping: ## ping inventory
-	ansible all -i inventory.py -m ping
+	@ansible all -i inventory.py -m ping
+
+boot: ## boot0up over wol
+	@wakeonlan --ip ${HOMELAB_BROADCAST_ADDRESS} ${HOMELAB_MAC_ADDRESS}
+
+ssh: ## ssh into host
+	@ssh "${HOMELAB_USER}@${HOMELAB_IP}"
 
 deploy: ## deploy playbook
-	ansible-playbook -i inventory.py playbook.yml --extra-vars "state=present"
+	@ansible-playbook -i inventory.py playbook.yml --extra-vars "state=present"
 
 teardown: ## teardown playbook
-	ansible-playbook -i inventory.py playbook.yml --extra-vars "state=absent"
+	@ansible-playbook -i inventory.py playbook.yml --extra-vars "state=absent"
 
 help: ## show this help.
 	@echo 'Usage:'

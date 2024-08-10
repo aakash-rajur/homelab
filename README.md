@@ -1,7 +1,9 @@
 # HomeLab
+
 Personal homelab setup
 
 ## Prerequisites
+
 - Docker
 - Docker Compose
 - SSH
@@ -11,6 +13,7 @@ Personal homelab setup
 - Domain name
 
 ## Usage
+
 1. Setup nameservers for the domain:
     - Add Cloudflare nameservers to the domain registrar.
     - Add the domain to Cloudflare.
@@ -23,13 +26,17 @@ Personal homelab setup
     cd <repository-directory>
     ```
 4. Set up environment variables:
-    - Create a `.envrc.local` file in the project root and populate it with the necessary values. Refer to the `.envrc` file for the required variables.
+    - Create a `.envrc.local` file in the project root and populate it with the necessary values. Refer to the `.envrc`
+      file for the required variables.
     - Load the environment variables using `direnv allow` or `source .envrc.local`.
-5. Start the services:
+5. Tweak docker service for cadvisor from [here](https://github.com/google/cadvisor/blob/master/docs/running.md), if you wish
+   to avoid a non-root setup, update cgroup service in  [docker-compose.yml](docker-compose.yml) to run
+   in `priviled: true` mode
+6. Start the services:
     ```bash
      make deploy
     ```
-6. Stop the services:
+7. Stop the services:
     ```bash
     make teardown
     ```
@@ -72,4 +79,5 @@ Personal homelab setup
 | `grafana`      | Analytics and monitoring platform.                                             | `https://grafana.<root_domain>`    |
 
 ## License
+
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
