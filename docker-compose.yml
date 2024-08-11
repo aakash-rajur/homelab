@@ -130,6 +130,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "/usr/bin/curl:/usr/bin/curl"
+    restart: unless-stopped
   nodeexporter:
     image: "prom/node-exporter"
     container_name: "nodeexporter"
@@ -161,6 +162,7 @@ services:
       - "/dev/kmsg:/dev/kmsg"
     security_opt:
       - "seccomp=metrics/cadvisor-profile.json"
+    restart: unless-stopped
   prometheus:
     image: "prom/prometheus"
     container_name: "prometheus"
@@ -183,7 +185,7 @@ services:
       - "traefik.http.routers.prometheus.middlewares=auth@docker"
     healthcheck:
       test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/-/healthy" ]
-    restart: always
+    restart: unless-stopped
   grafana:
     image: "grafana/grafana"
     container_name: "grafana"
@@ -209,6 +211,33 @@ services:
     depends_on:
       prometheus:
         condition: service_started
+  pihole:
+    image: "pihole/pihole"
+    container_name: "pihole"
+    environment:
+      - "TZ=Asia/Kolkata"
+      - "WEBPASSWORD={{ pihole_admin_password }}"
+      - "INTERFACE=0.0.0.0"
+      - "DNSMASQ_LISTENING=local"
+      - "VIRTUAL_HOST=pihole.{{ root_domain }}"
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "853:853/tcp"
+    volumes:
+      - "{{ project_dir }}/pihole:/etc/pihole"
+      - "{{ project_dir }}/pihole/dnsmasq.d:/etc/dnsmasq.d"
+      - "{{ project_dir }}/pihole/lighttpd/external.conf:/etc/lighttpd/external.conf"
+    cap_add:
+      - "NET_ADMIN"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pihole.rule=Host(`pihole.{{ root_domain }}`)"
+      - "traefik.http.routers.pihole.entrypoints=websecure"
+      - "traefik.http.routers.pihole.service=pihole"
+      - "traefik.http.services.pihole.loadbalancer.server.port=80"
+      - "traefik.http.routers.pihole.tls=true"
+    restart: unless-stopped
 
 volumes:
   prometheus: { }
