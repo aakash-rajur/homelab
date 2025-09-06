@@ -29,3 +29,8 @@ setup for personal homelab
    MODULES=(dm_mod dm_crypt)
    ```
 3. install [rancher/local-path-provisioner](https://github.com/rancher/local-path-provisioner)
+
+### gateway setup
+1. install [metallb](https://metallb.io/installation/#installation-by-manifest)
+2. configure metallb with manifest in [metallb/config.yaml](metallb/config.yaml)
+3. install [envoy](https://gateway.envoyproxy.io/docs/install/install-yaml/)
