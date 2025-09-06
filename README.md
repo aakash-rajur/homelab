@@ -21,3 +21,11 @@ setup for personal homelab
    k0s install controller --enable-worker --no-taints -c /etc/k0s/k0s.yaml
    ```
 6. verify by running `busybox`
+
+### csi setup
+1. install `extra/open-iscsi`, `core/nfs-utils`, `core/cryptsetup` and `core/device-mapper`
+2. update kernel modules by updating/appending the following and then rebuild your kernel with `mkinitcpio -P`. verify by issuing `lsmod | grep dm_crypt`
+   ```/etc/mkinitcpio.conf
+   MODULES=(dm_mod dm_crypt)
+   ```
+3. install [rancher/local-path-provisioner](https://github.com/rancher/local-path-provisioner)
