@@ -32,5 +32,5 @@ setup for personal homelab
 
 ### gateway setup
 1. install [metallb](https://metallb.io/installation/#installation-by-manifest)
-2. configure metallb with manifest in [metallb/config.yaml](metallb/config.yaml)
+2. configure metallb with manifest in [metallb/config.yaml](gateway/metallb/config.yaml)
 3. install [envoy](https://gateway.envoyproxy.io/docs/install/install-yaml/)
