@@ -1,0 +1,34 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: cloudflare-secrets
+  namespace: certmanager
+spec:
+  encryptedData:
+    CLOUDFLARE_API_TOKEN: AgB0hlzP5hnsVRYJALOYog/oH6NpD8ShwAYDxeKnditSZntSNUMhqCYZMiTO9BXAgZ10jJ7As7HtCCXmp9yHvcUN3dkfvIDArHHb2bEUtuIkhZ6lhCInCLhdEp45wm2iq8IpVhN6/Lsz1R38emSmGURrDPJv5gp42OBwLSNiEl3XtUAc2RTbJse+J219WfTcadDAm2TmZg9W+YyT1CafV+Z78JQH9wQvDq6/r2nv29PoJRZCfM/3eu2JQnrsS4YCSkbWYDnU75N80bFoB1Aq2AwNu3bE3ueFz87240cYcgk3D+9Ie7V/ZDRLv9+CbeaSZQQI/iGUFCs6oWG2LY4kG0EgRldObsWM8t3Z9IQXIa6BNMHeXVKCXBta5iB63lL/ukvNSd9qnj41slInvqQmnxY8VDHycQXXP8d8QCmDa+kC/8XKEpz0gPwGLA3W6ec/12LKCdkXffi8kjRJLmztWvkcqfLFykEw+co/OU68n6tKazjFWEsUOjvcYnfntlwcfpeeo8PO1ST2Ne8sP1Q2vTyrSnZk7LFR+RtvS6hby1IGTORv1vCRRkIRyH/Hm2aUGtswd6Ozg0zSzjmfdZ8JEfspv/JACzgJCLsf4WjSfJxeuiefb7jk6pYBUM8lE+HkmXsHIgfJCw4XCLx4LBhFXl3oEtByr22jw0vluhxyxszA4nszFn1xCo9W+WyXkRspCmtMENwzjJh6/M78tSa1LrJZpeRqDG2+kCRi/fFmD1Ich7XJIm75Kf5P
+  template:
+    metadata:
+      creationTimestamp: null
+      name: cloudflare-secrets
+      namespace: certmanager
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: aakashrajur16@gmail.com
+    profile: tlsserver
+    privateKeySecretRef:
+      name: letsencrypt-certificates
+    solvers:
+    - selector: {}
+      dns01:
+        cloudflare:
+          apiTokenSecretRef:
+            name: cloudflare-secrets
+            key: CLOUDFLARE_API_TOKEN

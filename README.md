@@ -39,3 +39,8 @@ setup for personal homelab
 1. generate template from helm chart in [bitnami-labs/sealed-secrets](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#helm-chart)
 2. add CRDs in generated template from [ref](https://github.com/bitnami-labs/sealed-secrets/blob/main/helm/sealed-secrets/crds/bitnami.com_sealedsecrets.yaml) and install sealed secrets
 3. use [secrets/seal.sh](secrets/seal.sh) to generate encrypted secrets, can be commited safely within your repo
+
+### tls
+1. install [cert-manager](https://cert-manager.io/docs/installation/helm/)
+2. configure cluster issuer with your domain
+3. verify by issuing a certificate
