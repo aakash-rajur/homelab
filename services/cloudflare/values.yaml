@@ -1,0 +1,7 @@
+cloudflare:
+  externalSecret:
+    enabled: true
+    name: cloudflare-secrets
+    key: CLOUDFLARE_TUNNEL_TOKEN
+
+replicaCount: 1
