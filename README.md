@@ -32,8 +32,9 @@ setup for personal homelab
 
 ### gateway
 1. install [metallb](https://metallb.io/installation/#installation-by-manifest)
-2. configure metallb with manifest in [metallb/config.yaml](services/gateway/metallb/config.yaml)
+2. configure metallb with manifest in [services/metallb/config.yaml](services/gateway/metallb/config.yaml)
 3. install [envoy](https://gateway.envoyproxy.io/docs/install/install-yaml/)
+4. configure envoy with manifest in [services/envoy/config.yaml](services/envoy/config.yaml)
 
 ### sealed secrets
 1. generate template from helm chart in [bitnami-labs/sealed-secrets](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#helm-chart)
