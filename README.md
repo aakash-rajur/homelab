@@ -34,3 +34,8 @@ setup for personal homelab
 1. install [metallb](https://metallb.io/installation/#installation-by-manifest)
 2. configure metallb with manifest in [metallb/config.yaml](gateway/metallb/config.yaml)
 3. install [envoy](https://gateway.envoyproxy.io/docs/install/install-yaml/)
+
+### sealed secrets setup
+1. generate template from helm chart in [bitnami-labs/sealed-secrets](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#helm-chart)
+2. add CRDs in generated template from [ref](https://github.com/bitnami-labs/sealed-secrets/blob/main/helm/sealed-secrets/crds/bitnami.com_sealedsecrets.yaml) and install sealed secrets
+3. use [secrets/seal.sh](secrets/seal.sh) to generate encrypted secrets, can be commited safely within your repo
