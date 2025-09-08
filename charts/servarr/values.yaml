@@ -25,8 +25,8 @@ prowlarr:
       httpGet:
         path: /ping
         port: http
-    volumes: []
-    volumeMounts: []
+  volumes: []
+  volumeMounts: []
 
 radarr:
   image:
@@ -50,8 +50,8 @@ radarr:
       httpGet:
         path: /ping
         port: http
-    volumes: []
-    volumeMounts: []
+  volumes: []
+  volumeMounts: []
 
 sonarr:
   image:
@@ -75,8 +75,8 @@ sonarr:
       httpGet:
         path: /ping
         port: http
-    volumes: []
-    volumeMounts: []
+  volumes: []
+  volumeMounts: []
 
 bazarr:
   image:
@@ -100,8 +100,8 @@ bazarr:
       httpGet:
         path: /ping
         port: http
-    volumes: []
-    volumeMounts: []
+  volumes: []
+  volumeMounts: []
 
 imagePullSecrets: []
 nameOverride: ""

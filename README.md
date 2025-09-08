@@ -4,7 +4,7 @@ setup for personal homelab
 
 ## apps
 
-1. torrent
+1. transmission
 2. sabnzbd
 2. radarr
 2. sonarr
