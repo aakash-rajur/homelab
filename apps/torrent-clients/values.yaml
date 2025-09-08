@@ -1,0 +1,65 @@
+rootDomain: dexterslab.cc
+gateway:
+  name: "primary-gateway"
+  namespace: envoy-gateway-system
+
+transmission:
+  credentials:
+    user:
+      secretKeyRef:
+        name: torrent-client-credentials
+        key: USERNAME
+    password:
+      secretKeyRef:
+        name: torrent-client-credentials
+        key: PASSWORD
+  timezone: Asia/Calcutta
+  volumeMounts:
+    - name: transmission-config
+      mountPath: /config
+    - name: downloads
+      mountPath: /downloads
+
+sabnzbd:
+  credentials:
+    user:
+      secretKeyRef:
+        name: torrent-client-credentials
+        key: USERNAME
+    password:
+      secretKeyRef:
+        name: torrent-client-credentials
+        key: PASSWORD
+    apiKey:
+      secretKeyRef:
+        name: torrent-client-credentials
+        key: SABNZBD_API_KEY
+  timezone: Asia/Calcutta
+  volumeMounts:
+    - name: sabnzbd-config
+      mountPath: /config
+    - name: downloads
+      mountPath: /downloads
+  generateConfig:
+    volumeMounts:
+    - name: sabnzbd-config
+      mountPath: /workdir
+
+volumes:
+  - name: transmission-config
+    hostPath:
+      path: /mnt/disk2/apps/transmission
+      type: DirectoryOrCreate
+  - name: sabnzbd-config
+    hostPath:
+      path: /mnt/disk2/apps/sabnzbd
+      type: DirectoryOrCreate
+  - name: downloads
+    hostPath:
+      path: /mnt/disk2/apps/torrents/downloads
+      type: DirectoryOrCreate
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000

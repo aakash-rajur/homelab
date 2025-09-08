@@ -1,0 +1,112 @@
+replicaCount: 1
+
+rootDomain: ""
+gateway:
+  name: ""
+  namespace: ""
+
+transmission:
+  image:
+    repository: lscr.io/linuxserver/transmission
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  timezone: Etc/UTC
+  credentials:
+    user:
+      secretKeyRef:
+        name: ""
+        key: ""
+    password:
+      secretKeyRef:
+        name: ""
+        key: ""
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 80
+    appPort: 9091
+  resources: {}
+  healthcheck:
+    livenessProbe:
+      exec:
+        command:
+          - "nc"
+          - "-z"
+          - "localhost"
+          - "9091"
+    readinessProbe:
+      exec:
+        command:
+          - "nc"
+          - "-z"
+          - "localhost"
+          - "9091"
+  volumeMounts: []
+
+sabnzbd:
+  image:
+    repository: lscr.io/linuxserver/sabnzbd
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  timezone: Etc/UTC
+  credentials:
+    user:
+      secretKeyRef:
+        name: ""
+        key: ""
+    password:
+      secretKeyRef:
+        name: ""
+        key: ""
+    apiKey:
+      secretKeyRef:
+        name: ""
+        key: ""
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 80
+    appPort: 8090
+  resources: {}
+  healthcheck:
+    livenessProbe:
+      exec:
+        command:
+          - "bash"
+          - "-c"
+          - "curl -f http://localhost:8090/api/?apikey=$API_KEY"
+    readinessProbe:
+      exec:
+        command:
+          - "bash"
+          - "-c"
+          - "curl -f http://localhost:8090/api/?apikey=$API_KEY"
+  volumeMounts: []
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+

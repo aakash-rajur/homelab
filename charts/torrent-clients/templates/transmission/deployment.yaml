@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "torrent-clients.fullname" . }}-transmission
+  labels:
+    app.kubernetes.io/app: transmission
+    {{- include "torrent-clients.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.transmission.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/app: transmission
+      {{- include "torrent-clients.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/app: transmission
+        {{- include "torrent-clients.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "torrent-clients.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: transmission
+          image: "{{ .Values.transmission.image.repository }}:{{ .Values.transmission.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.transmission.image.pullPolicy }}
+          env:
+            - name: USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.transmission.credentials.user.secretKeyRef.name }}
+                  key: {{ .Values.transmission.credentials.user.secretKeyRef.key }}
+            - name: PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.transmission.credentials.password.secretKeyRef.name }}
+                  key: {{ .Values.transmission.credentials.password.secretKeyRef.key }}
+            - name: TZ
+              value: {{ .Values.transmission.timezone }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.transmission.service.appPort }}
+              protocol: TCP
+          {{- with .Values.transmission.healthcheck.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.transmission.healthcheck.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.transmission.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.transmission.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

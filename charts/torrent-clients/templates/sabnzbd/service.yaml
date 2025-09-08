@@ -1,0 +1,42 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "torrent-clients.fullname" . }}-sabnzbd
+  labels:
+    app.kubernetes.io/app: sabnzbd
+    {{- include "torrent-clients.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.sabnzbd.service.type }}
+  ports:
+    - port: {{ .Values.sabnzbd.service.port }}
+      targetPort: sabnzbd
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/app: sabnzbd
+    {{- include "torrent-clients.selectorLabels" . | nindent 4 }}
+{{- if .Values.gateway.name }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "torrent-clients.fullname" . }}-sabnzbd
+spec:
+  parentRefs:
+    - name: {{ .Values.gateway.name }}
+      namespace: {{ .Values.gateway.namespace }}
+  hostnames:
+    - "sabnzbd.{{ .Values.rootDomain }}"
+  rules:
+    - backendRefs:
+        - group: ""
+          kind: Service
+          name: {{ include "torrent-clients.fullname" . }}-sabnzbd
+          port: 80
+          weight: 1
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+{{- end }}

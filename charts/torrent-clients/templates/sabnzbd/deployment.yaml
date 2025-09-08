@@ -1,0 +1,127 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "torrent-clients.fullname" . }}-sabnzbd
+  labels:
+    app.kubernetes.io/app: sabnzbd
+    {{- include "torrent-clients.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.sabnzbd.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/app: sabnzbd
+      {{- include "torrent-clients.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/app: sabnzbd
+        {{- include "torrent-clients.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "torrent-clients.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - name: generate-sabnzbd-ini
+          image: dibi/envsubst:latest
+          env:
+            - name: USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.sabnzbd.credentials.user.secretKeyRef.name }}
+                  key: {{ .Values.sabnzbd.credentials.user.secretKeyRef.key }}
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.sabnzbd.credentials.password.secretKeyRef.name }}
+                  key: {{ .Values.sabnzbd.credentials.password.secretKeyRef.key }}
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.sabnzbd.credentials.apiKey.secretKeyRef.name }}
+                  key: {{ .Values.sabnzbd.credentials.apiKey.secretKeyRef.key }}
+            - name: ROOT_DOMAIN
+              value: {{ .Values.rootDomain }}
+            - name: TZ
+              value: {{ .Values.transmission.timezone }}
+          volumeMounts:
+            - name: sabnzbd-ini-template
+              mountPath: /workdir/template
+          {{- with .Values.sabnzbd.generateConfig.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          command:
+            - "sh"
+            - "-c"
+            - "envsubst < template/sabnzbd.ini > sabnzbd.ini"
+      containers:
+        - name: sabnzbd
+          image: "{{ .Values.sabnzbd.image.repository }}:{{ .Values.sabnzbd.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.sabnzbd.image.pullPolicy }}
+          env:
+            - name: USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.sabnzbd.credentials.user.secretKeyRef.name }}
+                  key: {{ .Values.sabnzbd.credentials.user.secretKeyRef.key }}
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.sabnzbd.credentials.password.secretKeyRef.name }}
+                  key: {{ .Values.sabnzbd.credentials.password.secretKeyRef.key }}
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.sabnzbd.credentials.apiKey.secretKeyRef.name }}
+                  key: {{ .Values.sabnzbd.credentials.apiKey.secretKeyRef.key }}
+          ports:
+            - name: sabnzbd
+              containerPort: {{ .Values.sabnzbd.service.appPort }}
+              protocol: TCP
+          {{- with .Values.sabnzbd.healthcheck.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.sabnzbd.healthcheck.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.sabnzbd.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.sabnzbd.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: sabnzbd-ini-template
+          configMap:
+            name: {{ include "torrent-clients.fullname" . }}-sabnzbd-ini-template
+      {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
