@@ -78,6 +78,31 @@ sonarr:
     volumes: []
     volumeMounts: []
 
+bazarr:
+  image:
+    repository: lscr.io/linuxserver/bazarr
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  workingDir: /config
+  timezone: Etc/UTC
+  replicaCount: 1
+  resources: {}
+  service:
+    type: ClusterIP
+    port: 80
+    appPort: 6767
+  healthcheck:
+    livenessProbe:
+      httpGet:
+        path: /ping
+        port: http
+    readinessProbe:
+      httpGet:
+        path: /ping
+        port: http
+    volumes: []
+    volumeMounts: []
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""

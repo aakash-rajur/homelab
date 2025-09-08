@@ -1,0 +1,42 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bazarr
+  labels:
+    app.kubernetes.io/app: bazarr
+    {{- include "servarr.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.bazarr.service.type }}
+  ports:
+    - port: {{ .Values.bazarr.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/app: bazarr
+    {{- include "servarr.selectorLabels" . | nindent 4 }}
+{{- if .Values.gateway.name }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: bazarr
+spec:
+  parentRefs:
+    - name: {{ .Values.gateway.name }}
+      namespace: {{ .Values.gateway.namespace }}
+  hostnames:
+    - "bazarr.{{ .Values.rootDomain }}"
+  rules:
+    - backendRefs:
+        - group: ""
+          kind: Service
+          name: bazarr
+          port: 80
+          weight: 1
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+{{- end }}

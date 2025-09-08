@@ -52,6 +52,31 @@ sonarr:
     - name: downloads
       mountPath: /downloads
 
+bazarr:
+  timezone: Asia/Calcutta
+  volumes:
+    - name: bazarr-config
+      hostPath:
+        path: /mnt/disk2/apps/bazarr
+        type: DirectoryOrCreate
+    - name: movies
+      hostPath:
+        path: /mnt/disk1/movies
+        type: DirectoryOrCreate
+    - name: shows
+      hostPath:
+        path: /mnt/disk1/shows
+        type: DirectoryOrCreate
+  volumeMounts:
+    - name: bazarr-config
+      mountPath: /config
+    - name: movies
+      mountPath: /movies
+    - name: shows
+      mountPath: /tv
+    - name: downloads
+      mountPath: /downloads
+
 podSecurityContext:
   runAsUser: 1000
   runAsGroup: 1000
