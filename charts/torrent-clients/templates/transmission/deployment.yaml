@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "torrent-clients.fullname" . }}-transmission
+  name: transmission
   labels:
     app.kubernetes.io/app: transmission
     {{- include "torrent-clients.labels" . | nindent 4 }}

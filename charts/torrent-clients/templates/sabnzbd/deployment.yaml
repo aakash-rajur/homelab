@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "torrent-clients.fullname" . }}-sabnzbd
+  name: sabnzbd
   labels:
     app.kubernetes.io/app: sabnzbd
     {{- include "torrent-clients.labels" . | nindent 4 }}
@@ -109,7 +109,7 @@ spec:
       volumes:
         - name: sabnzbd-ini-template
           configMap:
-            name: {{ include "torrent-clients.fullname" . }}-sabnzbd-ini-template
+            name: sabnzbd-ini-template
       {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}

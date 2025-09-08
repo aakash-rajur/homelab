@@ -56,7 +56,7 @@ volumes:
       type: DirectoryOrCreate
   - name: downloads
     hostPath:
-      path: /mnt/disk2/apps/torrents/downloads
+      path: /mnt/disk2/apps/torrents
       type: DirectoryOrCreate
 
 podSecurityContext:
