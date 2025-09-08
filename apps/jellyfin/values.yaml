@@ -1,0 +1,48 @@
+rootDomain: dexterslab.cc
+gateway:
+  name: "primary-gateway"
+  namespace: envoy-gateway-system
+
+jellyfin:
+  timezone: Asia/Calcutta
+  volumes:
+    - name: jellyfin-data
+      hostPath:
+        path: /mnt/disk2/apps/jellyfin
+        type: DirectoryOrCreate
+    - name: movies
+      hostPath:
+        path: /mnt/disk1/movies
+        type: DirectoryOrCreate
+    - name: shows
+      hostPath:
+        path: /mnt/disk1/shows
+        type: DirectoryOrCreate
+    - name: dri
+      hostPath:
+        path: /dev/dri
+  volumeMounts:
+    - name: jellyfin-data
+      mountPath: /home/jellyfin
+    - name: movies
+      mountPath: /media
+    - name: shows
+      mountPath: /media2
+    - name: dri
+      mountPath: /dev/dri
+
+jellyseerr:
+  timezone: Asia/Calcutta
+  volumes:
+    - name: jellyseerr-data
+      hostPath:
+        path: /mnt/disk2/apps/jellyseerr
+        type: DirectoryOrCreate
+  volumeMounts:
+    - name: jellyseerr-data
+      mountPath: /app/config
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000

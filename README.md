@@ -13,7 +13,7 @@ setup for personal homelab
 5. homepage
 6. postgresql
 
-## os
+### os
 
 1. fresh arch linux install
 2. install `git`, `extra/bind`, `core/inetutils`, `core/net-tools`, `jq`, `yq`
@@ -58,3 +58,8 @@ setup for personal homelab
 1. install [cert-manager](https://cert-manager.io/docs/installation/helm/)
 2. configure cluster issuer with your domain
 3. verify by issuing a certificate
+
+### graphics acceleration
+1. install `linux-firmware`, `mesa`, `intel-media-driver`
+2. follow instructions [jellyfin/intel](https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel/#configure-and-verify-lp-mode-on-linux)
+3.
