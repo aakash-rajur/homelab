@@ -1,0 +1,42 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sonarr
+  labels:
+    app.kubernetes.io/app: sonarr
+    {{- include "servarr.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.sonarr.service.type }}
+  ports:
+    - port: {{ .Values.sonarr.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/app: sonarr
+    {{- include "servarr.selectorLabels" . | nindent 4 }}
+{{- if .Values.gateway.name }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: sonarr
+spec:
+  parentRefs:
+    - name: {{ .Values.gateway.name }}
+      namespace: {{ .Values.gateway.namespace }}
+  hostnames:
+    - "sonarr.{{ .Values.rootDomain }}"
+  rules:
+    - backendRefs:
+        - group: ""
+          kind: Service
+          name: sonarr
+          port: 80
+          weight: 1
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+{{- end }}

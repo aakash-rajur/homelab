@@ -1,0 +1,106 @@
+rootDomain: ""
+gateway:
+  name: ""
+  namespace: ""
+
+prowlarr:
+  image:
+    repository: lscr.io/linuxserver/prowlarr
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  workingDir: /config
+  timezone: Etc/UTC
+  replicaCount: 1
+  resources: {}
+  service:
+    type: ClusterIP
+    port: 80
+    appPort: 9696
+  healthcheck:
+    livenessProbe:
+      httpGet:
+        path: /ping
+        port: http
+    readinessProbe:
+      httpGet:
+        path: /ping
+        port: http
+    volumes: []
+    volumeMounts: []
+
+radarr:
+  image:
+    repository: lscr.io/linuxserver/radarr
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  workingDir: /config
+  timezone: Etc/UTC
+  replicaCount: 1
+  resources: {}
+  service:
+    type: ClusterIP
+    port: 80
+    appPort: 7878
+  healthcheck:
+    livenessProbe:
+      httpGet:
+        path: /ping
+        port: http
+    readinessProbe:
+      httpGet:
+        path: /ping
+        port: http
+    volumes: []
+    volumeMounts: []
+
+sonarr:
+  image:
+    repository: lscr.io/linuxserver/sonarr
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  workingDir: /config
+  timezone: Etc/UTC
+  replicaCount: 1
+  resources: {}
+  service:
+    type: ClusterIP
+    port: 80
+    appPort: 8989
+  healthcheck:
+    livenessProbe:
+      httpGet:
+        path: /ping
+        port: http
+    readinessProbe:
+      httpGet:
+        path: /ping
+        port: http
+    volumes: []
+    volumeMounts: []
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

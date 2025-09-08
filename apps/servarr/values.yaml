@@ -1,0 +1,64 @@
+rootDomain: dexterslab.cc
+gateway:
+  name: "primary-gateway"
+  namespace: envoy-gateway-system
+
+prowlarr:
+  timezone: Asia/Calcutta
+  volumes:
+    - name: prowlarr-config
+      hostPath:
+        path: /mnt/disk2/apps/prowlarr
+        type: DirectoryOrCreate
+  volumeMounts:
+    - name: prowlarr-config
+      mountPath: /config
+
+radarr:
+  timezone: Asia/Calcutta
+  volumes:
+    - name: radarr-config
+      hostPath:
+        path: /mnt/disk2/apps/radarr
+        type: DirectoryOrCreate
+    - name: movies
+      hostPath:
+        path: /mnt/disk1/movies
+        type: DirectoryOrCreate
+  volumeMounts:
+    - name: radarr-config
+      mountPath: /config
+    - name: movies
+      mountPath: /movies
+    - name: downloads
+      mountPath: /downloads
+
+sonarr:
+  timezone: Asia/Calcutta
+  volumes:
+    - name: sonarr-config
+      hostPath:
+        path: /mnt/disk2/apps/sonarr
+        type: DirectoryOrCreate
+    - name: shows
+      hostPath:
+        path: /mnt/disk1/shows
+        type: DirectoryOrCreate
+  volumeMounts:
+    - name: sonarr-config
+      mountPath: /config
+    - name: shows
+      mountPath: /tv
+    - name: downloads
+      mountPath: /downloads
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+volumes:
+  - name: downloads
+    hostPath:
+      path: /mnt/disk2/apps/torrents
+      type: DirectoryOrCreate
