@@ -35,7 +35,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-        - name: {{ .Chart.Name }}-bazarr
+        - name: bazarr
           {{- with .Values.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
@@ -50,11 +50,11 @@ spec:
             - name: http
               containerPort: {{ .Values.bazarr.service.appPort }}
               protocol: TCP
-          {{- with .Values.bazarr.livenessProbe }}
+          {{- with .Values.bazarr.healthcheck.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.bazarr.readinessProbe }}
+          {{- with .Values.bazarr.healthcheck.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}

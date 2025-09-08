@@ -35,7 +35,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-        - name: {{ .Chart.Name }}-sonarr
+        - name: sonarr
           {{- with .Values.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
@@ -46,15 +46,17 @@ spec:
           env:
             - name: TZ
               value: {{ .Values.sonarr.timezone }}
+            - name: DOCKER_MODS
+              value: DOCKER_MODS=linuxserver/mods:jellyfin-opencl-intel
           ports:
             - name: http
               containerPort: {{ .Values.sonarr.service.appPort }}
               protocol: TCP
-          {{- with .Values.sonarr.livenessProbe }}
+          {{- with .Values.sonarr.healthcheck.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.sonarr.readinessProbe }}
+          {{- with .Values.sonarr.healthcheck.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}

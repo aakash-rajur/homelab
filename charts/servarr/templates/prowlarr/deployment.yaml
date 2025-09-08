@@ -35,7 +35,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-        - name: {{ .Chart.Name }}-prowlarr
+        - name: prowlarr
           {{- with .Values.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
@@ -50,11 +50,11 @@ spec:
             - name: http
               containerPort: {{ .Values.prowlarr.service.appPort }}
               protocol: TCP
-          {{- with .Values.prowlarr.livenessProbe }}
+          {{- with .Values.prowlarr.healthcheck.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.prowlarr.readinessProbe }}
+          {{- with .Values.prowlarr.healthcheck.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}

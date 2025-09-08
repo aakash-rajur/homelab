@@ -35,7 +35,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-        - name: {{ .Chart.Name }}-radarr
+        - name: radarr
           {{- with .Values.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
@@ -50,11 +50,11 @@ spec:
             - name: http
               containerPort: {{ .Values.radarr.service.appPort }}
               protocol: TCP
-          {{- with .Values.radarr.livenessProbe }}
+          {{- with .Values.radarr.healthcheck.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.radarr.readinessProbe }}
+          {{- with .Values.radarr.healthcheck.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
