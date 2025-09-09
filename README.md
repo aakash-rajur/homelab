@@ -2,7 +2,7 @@
 
 setup for personal homelab
 
-## apps
+### apps
 
 1. transmission
 2. sabnzbd
@@ -14,7 +14,7 @@ setup for personal homelab
 8. homepage
 9. postgresql
 
-### os
+## os
 
 1. fresh arch linux install
 2. install `git`, `extra/bind`, `core/inetutils`, `core/net-tools`, `jq`, `yq`
