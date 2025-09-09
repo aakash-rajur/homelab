@@ -1,0 +1,73 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pihole
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: pihole-secrets
+  namespace: pihole
+spec:
+  encryptedData:
+    PASSWORD: AgAZgcOTTL7suY2ulUj8b8pkrsaLSkkqbZUziMEI5juYlx8Vqv2YozIP9EmXp7iayf9lpb7a4GHAQaJi3ZkFiUslhN9loYzGfFPJ9AkUlPpuEKpZYlYGWQa8AdbfSUpsDEb/FqAPCzBXSmN5SgQ3IVtDUmSDlFJNU6DPafjOmxkB5iz0BT5EiXca8IAInAXv9zi8R8soNI4PUfgeBEzljz+H+oWmLsKgcmOjKWB3GlBFhBuyF8pjwimbVbtCPCqD5GLgxEhCyYHzRXCLKP9bwtas6NOCWr6+cD/5hO7fBfyo3YDgRLKyNj4KydpHjpCgB1bpSQfeMNQEkvo9jYs3FkiTv7TjMMXEleJCMvubTFYFOg/+8+zesSTgTIgUZB/U335GVYBhfuuCysqLMNCxTx7ZuycZ0KvF1sGdmBYgsKRzHksNpi2ebeUusXJvN1aI74/waiidtByuaA+RabtD+bY0P8VlgmLv0QKaQab/NZQjzI0tmELCsI9NK2A5N812/BaSh6Ne2qj5uBC6YLIKwv4V6YoMnOFDteDJxZ7fr9MbRapUh0hBTsuIrYxtdSW5rlIO6oNWXscMrjQJfmwPe4RpyskWj97amvXra0VbDOULk6l038eWv7b94AjHfn4M3z4tj8svAoJaXmIi6w/+ephk8zq71icdtbajbKiQ7jKCkwv/1CG1XRzMqO34of5MSu6/pmkuHk1gLug5zx/nRYstS/6luDMBQzN3249DHjXuyg==
+  template:
+    metadata:
+      creationTimestamp: null
+      name: pihole-secrets
+      namespace: pihole
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: pihole-web
+  namespace: pihole
+spec:
+  parentRefs:
+    - name: primary-gateway
+      namespace: envoy-gateway-system
+  hostnames:
+    - "pihole.dexterslab.cc"
+  rules:
+    - backendRefs:
+        - group: ""
+          kind: Service
+          name: pihole-web
+          port: 80
+          weight: 1
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: TCPRoute
+metadata:
+  name: pihold-dns-tcp
+  namespace: pihole
+spec:
+  parentRefs:
+    - name: primary-gateway
+      namespace: envoy-gateway-system
+  rules:
+    - backendRefs:
+        - name: pihole-dns
+          kind: Service
+          port: 53
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: UDPRoute
+metadata:
+  name: pihold-dns-udp
+  namespace: pihole
+spec:
+  parentRefs:
+    - name: primary-gateway
+      namespace: envoy-gateway-system
+  rules:
+    - backendRefs:
+        - name: pihole-dns
+          kind: Service
+          port: 53

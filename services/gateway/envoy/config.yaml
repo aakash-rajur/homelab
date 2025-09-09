@@ -10,8 +10,8 @@ spec:
     name: letsencrypt
     kind: ClusterIssuer
   dnsNames:
-  - "dexterslab.cc"
-  - "*.dexterslab.cc"
+    - "dexterslab.cc"
+    - "*.dexterslab.cc"
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: GatewayClass
