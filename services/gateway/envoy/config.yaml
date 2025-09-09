@@ -1,17 +1,17 @@
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: dexterslab-tls
-  namespace: envoy-gateway-system
-spec:
-  secretName: dexterslab-tls
-  issuerRef:
-    name: letsencrypt
-    kind: ClusterIssuer
-  dnsNames:
-    - "dexterslab.cc"
-    - "*.dexterslab.cc"
+#---
+#apiVersion: cert-manager.io/v1
+#kind: Certificate
+#metadata:
+#  name: dexterslab-tls
+#  namespace: envoy-gateway-system
+#spec:
+#  secretName: dexterslab-tls
+#  issuerRef:
+#    name: letsencrypt
+#    kind: ClusterIssuer
+#  dnsNames:
+#    - "dexterslab.cc"
+#    - "*.dexterslab.cc"
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: GatewayClass
@@ -35,14 +35,14 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
-    - name: https
-      protocol: HTTPS
-      port: 443
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: dexterslab-tls
-      allowedRoutes:
-        namespaces:
-          from: All
+#    - name: https
+#      protocol: HTTPS
+#      port: 443
+#      tls:
+#        mode: Terminate
+#        certificateRefs:
+#          - kind: Secret
+#            name: dexterslab-tls
+#      allowedRoutes:
+#        namespaces:
+#          from: All

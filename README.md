@@ -58,6 +58,8 @@ setup for personal homelab
 
 ### tls
 
+> this was removed as cloudflare does not support tls passthrough in tunnels, keeping it around for reference
+
 1. install [cert-manager](https://cert-manager.io/docs/installation/helm/)
 2. configure cluster issuer with your domain
 3. verify by issuing a certificate
