@@ -6,12 +6,13 @@ setup for personal homelab
 
 1. transmission
 2. sabnzbd
-2. radarr
-2. sonarr
-3. jellyfin
-4. jellyseer
-5. homepage
-6. postgresql
+3. radarr
+4. sonarr
+5. bazarr
+6. jellyfin
+7. jellyseerr
+8. homepage
+9. postgresql
 
 ### os
 
@@ -60,6 +61,7 @@ setup for personal homelab
 3. verify by issuing a certificate
 
 ### graphics acceleration
+
 1. install `linux-firmware`, `mesa`, `intel-media-driver`
-2. follow instructions [jellyfin/intel](https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel/#configure-and-verify-lp-mode-on-linux)
-3.
+2. follow
+   instructions [jellyfin/intel](https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel/#configure-and-verify-lp-mode-on-linux)
