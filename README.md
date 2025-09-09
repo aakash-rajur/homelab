@@ -67,3 +67,27 @@ setup for personal homelab
 1. install `linux-firmware`, `mesa`, `intel-media-driver`
 2. follow
    instructions [jellyfin/intel](https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/intel/#configure-and-verify-lp-mode-on-linux)
+
+## apps
+
+### transmission and sabnzbd
+
+1. [charts/torrent-clients](charts/torrent-clients) deploy transmission and sabnzbd
+2. we're generating sabnzbd.ini from secrets through init containers before booting
+3. all credentials are configured through sealed secrets
+
+### servarr
+
+1. apps deployed include `prowlarr`, `radarr`, `sonarr` and `bazarr`
+2. directory mounts need to be carefully configured
+3. chart located in [charts/servarr](charts/servarr)
+
+### jellyfin
+
+1. deploys `jellyfin` and `jellyseerr`
+2. directory mounts need to be carefully configured
+3. chart located in [charts/jellyfin](charts/jellyfin)
+
+### cloudflare tunnel
+1. all traffic is exposed through http routes attached to [primary-gateway](services/gateway/envoy/config.yaml)
+2. [cloudflare tunnel](charts/cloudflare-tunnel-remote) forwards traffic to [primary-gateway](services/gateway/envoy/config.yaml)
