@@ -2,8 +2,6 @@
 
 setup for personal homelab
 
-### apps
-
 1. transmission
 2. sabnzbd
 3. radarr
