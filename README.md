@@ -29,6 +29,8 @@ setup for personal homelab
 
 ### csi
 
+> this was removed as we're using hostPath. keeping it around for reference
+
 1. install `extra/open-iscsi`, `core/nfs-utils`, `core/cryptsetup` and `core/device-mapper`
 2. update kernel modules by updating/appending the following and then rebuild your kernel with `mkinitcpio -P`. verify
    by issuing `lsmod | grep dm_crypt`
