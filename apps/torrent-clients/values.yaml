@@ -44,6 +44,25 @@ sabnzbd:
     volumeMounts:
     - name: sabnzbd-config
       mountPath: /workdir
+  config:
+    - host: eunews.frugalusenet.com
+      port: 563
+      secretKeyRef:
+        name: "torrent-client-credentials"
+        usernameKey: "NZB_USERNAME"
+        passwordKey: "NZB_PASSWORD"
+    - host: asnews.frugalusenet.com
+      port: 563
+      secretKeyRef:
+        name: "torrent-client-credentials"
+        usernameKey: "NZB_USERNAME"
+        passwordKey: "NZB_PASSWORD"
+    - host: aunews.frugalusenet.com
+      port: 563
+      secretKeyRef:
+        name: "torrent-client-credentials"
+        usernameKey: "NZB_USERNAME"
+        passwordKey: "NZB_PASSWORD"
 
 volumes:
   - name: transmission-config

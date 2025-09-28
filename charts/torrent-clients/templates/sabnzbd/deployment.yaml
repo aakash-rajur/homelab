@@ -35,7 +35,7 @@ spec:
       {{- end }}
       initContainers:
         - name: generate-sabnzbd-ini
-          image: dibi/envsubst:latest
+          image: hairyhenderson/gomplate:alpine
           env:
             - name: USERNAME
               valueFrom:
@@ -56,16 +56,31 @@ spec:
               value: {{ .Values.rootDomain }}
             - name: TZ
               value: {{ .Values.transmission.timezone }}
+          {{- range $i, $each := .Values.sabnzbd.config }}
+            - name: {{ replace "." "_" $each.host | upper }}_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $each.secretKeyRef.name }}
+                  key: {{ $each.secretKeyRef.usernameKey }}
+            - name: {{ replace "." "_" $each.host | upper }}_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $each.secretKeyRef.name }}
+                  key: {{ $each.secretKeyRef.passwordKey }}
+          {{- end }}
           volumeMounts:
             - name: sabnzbd-ini-template
               mountPath: /workdir/template
           {{- with .Values.sabnzbd.generateConfig.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          workingDir: /workdir
           command:
-            - "sh"
-            - "-c"
-            - "envsubst < template/sabnzbd.ini > sabnzbd.ini"
+            - "gomplate"
+            - "--file"
+            - "template/sabnzbd.ini"
+            - "--out"
+            - "sabnzbd.ini"
       containers:
         - name: sabnzbd
           image: "{{ .Values.sabnzbd.image.repository }}:{{ .Values.sabnzbd.image.tag | default .Chart.AppVersion }}"

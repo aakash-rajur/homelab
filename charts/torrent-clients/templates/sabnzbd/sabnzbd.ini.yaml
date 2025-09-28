@@ -6,4 +6,4 @@ metadata:
     {{- include "torrent-clients.labels" . | nindent 4 }}
 data:
   sabnzbd.ini: |-
-    {{- .Files.Get "sabnzbd.ini" | nindent 4 }}
+    {{- tpl (.Files.Get "sabnzbd.ini") . | nindent 4 }}
