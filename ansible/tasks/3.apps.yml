@@ -20,3 +20,19 @@
         values_files:
           - "../apps/torrent-clients/values.yaml"
       delegate_to: localhost
+    - name: Configure servarr
+      kubernetes.core.k8s:
+        context: "k0s"
+        template:
+          - path: "../apps/servarr/config.yaml"
+        state: present
+      delegate_to: localhost
+    - name: Install servarr
+      kubernetes.core.helm:
+        context: "k0s"
+        name: "servarr"
+        chart_ref: "../charts/servarr"
+        release_namespace: servarr
+        values_files:
+          - "../apps/servarr/values.yaml"
+      delegate_to: localhost
