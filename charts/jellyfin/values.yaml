@@ -20,11 +20,11 @@ jellyfin:
     livenessProbe:
       httpGet:
         path: /health
-        port: http
+        port: 8096
     readinessProbe:
       httpGet:
         path: /health
-        port: http
+        port: 8096
   securityContext: {}
   volumes: []
   volumeMounts: []
