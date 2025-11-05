@@ -1,10 +1,10 @@
 - name: Install apps
   block:
-    - name: Load Cloudflare Env
+    - name: Load torrent client env
       import_tasks: "common/read_env.yml"
       vars:
         path: "../apps/torrent-clients/.envrc"
-    - name: Configure Cloudflare Tunnel
+    - name: Configure torrent client
       kubernetes.core.k8s:
         context: "k0s"
         template:

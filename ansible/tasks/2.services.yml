@@ -18,18 +18,18 @@
       loop:
         - "../services/gateway/envoy/install.yaml"
         - "../services/gateway/envoy/config.yaml"
-    - name: Load Cloudflare Env
+    - name: Load cloudflare env
       import_tasks: "common/read_env.yml"
       vars:
         path: "../services/cloudflare/.envrc"
-    - name: Configure Cloudflare Tunnel
+    - name: Configure cloudflare tunnel
       kubernetes.core.k8s:
         context: "k0s"
         template:
           - path: "../services/cloudflare/config.yaml"
         state: present
       delegate_to: localhost
-    - name: Install Cloudflare Tunnel
+    - name: Install cloudflare tunnel
       kubernetes.core.helm:
         context: "k0s"
         name: "cloudflare-tunnel-remote"
