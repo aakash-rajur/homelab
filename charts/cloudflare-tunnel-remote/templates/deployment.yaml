@@ -58,6 +58,6 @@ spec:
             # it has an active connection to the edge.
             path: /ready
             port: 2000
-          failureThreshold: 1
-          initialDelaySeconds: 10
-          periodSeconds: 10
+          failureThreshold: 10
+          initialDelaySeconds: 30
+          periodSeconds: 30
