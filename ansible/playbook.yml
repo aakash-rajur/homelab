@@ -12,3 +12,5 @@
 #      import_tasks: "tasks/1.k0s.yml"
     - name: Setup services
       import_tasks: "tasks/2.services.yml"
+    - name: Setup apps
+      import_tasks: "tasks/3.apps.yml"

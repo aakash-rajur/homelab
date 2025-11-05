@@ -1,0 +1,22 @@
+- name: Install apps
+  block:
+    - name: Load Cloudflare Env
+      import_tasks: "common/read_env.yml"
+      vars:
+        path: "../apps/torrent-clients/.envrc"
+    - name: Configure Cloudflare Tunnel
+      kubernetes.core.k8s:
+        context: "k0s"
+        template:
+          - path: "../apps/torrent-clients/config.yaml"
+        state: present
+      delegate_to: localhost
+    - name: Install torrent clients
+      kubernetes.core.helm:
+        context: "k0s"
+        name: "torrent-clients"
+        chart_ref: "../charts/torrent-clients"
+        release_namespace: torrent-clients
+        values_files:
+          - "../apps/torrent-clients/values.yaml"
+      delegate_to: localhost
