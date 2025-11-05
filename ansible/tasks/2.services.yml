@@ -1,0 +1,40 @@
+- name: Install services
+  block:
+    - name: Install MetalLB
+      kubernetes.core.k8s:
+        context: "k0s"
+        src: "{{ item }}"
+        state: present
+      delegate_to: localhost
+      loop:
+        - "../services/gateway/metallb/install.yaml"
+        - "../services/gateway/metallb/config.yaml"
+    - name: Install Envoy Gateway
+      kubernetes.core.k8s:
+        context: "k0s"
+        src: "{{ item }}"
+        state: present
+      delegate_to: localhost
+      loop:
+        - "../services/gateway/envoy/install.yaml"
+        - "../services/gateway/envoy/config.yaml"
+    - name: Load Cloudflare Env
+      import_tasks: "common/read_env.yml"
+      vars:
+        path: "../services/cloudflare/.envrc"
+    - name: Configure Cloudflare Tunnel
+      kubernetes.core.k8s:
+        context: "k0s"
+        template:
+          - path: "../services/cloudflare/config.yaml"
+        state: present
+      delegate_to: localhost
+    - name: Install Cloudflare Tunnel
+      kubernetes.core.helm:
+        context: "k0s"
+        name: "cloudflare-tunnel-remote"
+        chart_ref: "../charts/cloudflare-tunnel-remote"
+        release_namespace: cloudflare
+        values_files:
+          - "../services/cloudflare/values.yaml"
+      delegate_to: localhost

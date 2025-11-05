@@ -4,18 +4,11 @@ kind: Namespace
 metadata:
   name: cloudflare
 ---
-apiVersion: bitnami.com/v1alpha1
-kind: SealedSecret
+apiVersion: v1
+kind: Secret
 metadata:
-  creationTimestamp: null
   name: cloudflare-secrets
   namespace: cloudflare
-spec:
-  encryptedData:
-    CLOUDFLARE_API_TOKEN: AgACgYFs9kDH5ioqpE2SQtU+M7ZovM5EbNxLDBym90O175NI5M2IAV8ghzF07swgYrvBt8OKFqnlqJyS5y651vUjgoe5g4T9WZv1tR/ibNjaRMCt4IQWLwy/9XRXDqFhsjNpRp7vnUgqC8Ga83UVsVWkWEBH5utAJHwD0VdzIkAL43FGkLt34k5jMmjlVeRgRdiM43IZhYm5/kkjTOLTiHdbPhWmAOe3UuICm5VTCU7KanVx1RAsZulBw5bgsN7+uwjQ11QuNT812OG4vaQI7IkpKqOJ+Es0RvS6sgb17EXYGGDXCm2YM+VOPgKwguEefalRyAyTAHpAbSjl0z4CXv7kxGW+SgCRPxqpkTGrS7sbsysvu4qNowSCyNGEJNNT2Ft/Nmdq/kSD4BcTpRdatvPMLDHIqY90hAIMCk+/AY2pCIBwPhcxl3+WHMKc5fvIfA6G5ZqQ/je8V2cYyDu/Jkg6IoUtNoTaVXXljE9P9WRKIUk+7cPSqBigBxsaWF8Yb4ntSuKV3GbLacXSEN90HVBq1ndBdXT0rHVPPBS0fNLYW0w+1v0orR4UwRqJMvYffmo9hv+p3ca7EP5+Q7DcmsniZ76WHDME0fdd/dEaFM6L+IaroIBKMs3dhsliLslWslLm1N+xfR8vU9PgR4xm1ymHqdtmLM411qOVGvkyEfLYsfDZntw2dsWfEY9V6UDjv+aOmGCvY4Df3Y9vCqUj3VTXotNiiO2Pjv8Sw+YU//0zXQ5bwoY+Vbvq
-    CLOUDFLARE_TUNNEL_TOKEN: AgCcMD0u9xA+zRVYuQmNhqN1tfRwmOg1i0aaK6hqT0LFbKP4XPLYFJ/l+tMvUK+yLWbDDOCuyWy5Z7xFpiH/GSrF0CPGhWzj/z6uMoRJ0BOvC4MFGNznElQdcAlXyh/xKZkN7tSos/dyFGnbSuiwAjJ3aM/+EuyYNlfV57Ql9a557BHhlB8mrVY/hE4xgal8h0h63QD494pZnC1TXw+Ln6o11A5pJPOkZ7K4bwP7gYwjO5znGGzB4FwMuDAY+JiTOgdK2MekeBR3ATtXO5bUsZ0+Fbewev0nCwN9Kg97X0wowkhOvqOuIPiZ10+8YgyWlbA/dRHMifgpfkxhAnJorxrzVBO4ZsmsHcpDIn+ii7+Y9TjemcjFSKra4KCtLa29q/T//4Uhg1EcD2t4jAT+R/MA2l2tF24iYGCLEwAJQUFj2guXRYM+oGBFC2I/OG0G5hRUj0C71PFAGYwZ8Xk57hJy+tNAHJbH9fPZI66iBb4CosND86FDjwy4fbWI+4kGrakclcAGOStDIVpuJCV9lw9Cp5L5ri+b4IIGFLqZA3MS9+HXju4KQHlt407sCgWP6r1PruWfEV4h68U/RqDOLAA7KR6aIaVXRfFauWOutziiFyaUYuYA5qEVOqm3y9u0LMcUDdAs3W/u5XqSl+DNT/UMMc40/ycOkbTR8TRY8OoKn0VgeeTeROAxKzGzD0Xz0V2UhbgFbtConju8FXIoipyv40/XDehZ6aU+KL5Rl6/5qSnE4X3TQ7kgyVFcLGxn0LNsB88UWO7bJOtJDP2N/cZRjn8S23slMx2fwhkGt+gBEimQsHof+DsCmOQBlz7EF1fKHkKNmtoQwTOapr5xkdAJJKfRuQA0nnwyVaM1ZtinaJtHq5z3V7QIh/YqZ9g0zIo3XkT/Mtuga28NwfgGEReyHPZYZ/G8+JYncpU6AnI5HzxycDijVIek
-  template:
-    metadata:
-      creationTimestamp: null
-      name: cloudflare-secrets
-      namespace: cloudflare
+data:
+    CLOUDFLARE_API_TOKEN: "{{ CLOUDFLARE_API_TOKEN | b64encode }}"
+    CLOUDFLARE_TUNNEL_TOKEN: "{{ CLOUDFLARE_TUNNEL_TOKEN | b64encode }}"
