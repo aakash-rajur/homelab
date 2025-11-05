@@ -1,0 +1,6 @@
+- name: Parse env file
+  set_fact:
+    "{{ item[0] }}": "{{ item[1] }}"
+  loop: >-
+    {{ lookup('file', path) 
+        | regex_findall('(?P<key>[A-Za-z][A-Za-z0-9_]+)=\"?(?P<value>[A-Za-z][A-Za-z0-9_]+)\"?', '\\g<key>', '\\g<value>') }}
