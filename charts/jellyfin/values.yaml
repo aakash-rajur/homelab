@@ -25,7 +25,7 @@ jellyfin:
       httpGet:
         path: /health
         port: http
-  securityContenxt: {}
+  securityContext: {}
   volumes: []
   volumeMounts: []
 
@@ -57,7 +57,7 @@ jellyseerr:
           - "-z"
           - "localhost"
           - "5055"
-  securityContenxt: {}
+  securityContext: {}
   volumes: []
   volumeMounts: []
 
