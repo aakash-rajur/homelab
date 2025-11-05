@@ -2,3 +2,4 @@ example.yaml
 example-*.yaml
 .envrc
 .envrc.*
+.idea

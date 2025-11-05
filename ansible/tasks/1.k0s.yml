@@ -1,0 +1,84 @@
+- name: Setup
+  block:
+    - name: Flatten all IPv4/IPv6 addresses into a single list
+      set_fact:
+        all_ips: >-
+          {{
+            real_interfaces
+              | map('extract', ansible_facts)
+              | map('json_query', "[ipv4.address, ipv6[].address]")
+              | list
+              | flatten
+              | reject('equalto', None)
+              | list
+              + ["archlinux"]
+          }}
+    - name: Show flattened IP list
+      debug:
+        var: all_ips
+    - name: Get public IP
+      command: curl -s https://api.ipify.org
+      register: public_ip
+      changed_when: false
+    - name: Public IP fact
+      set_fact:
+        public_ip: "{{ public_ip.stdout }}"
+    - name: Copy K0s config
+      become: true
+      copy:
+        content: >-
+          {{ lookup('file', 'files/k0s.yml')
+              | from_yaml
+              | combine({
+                  'spec': {
+                    'api': {
+                      'sans': all_ips,
+                      'address': all_ips[0],
+                    },
+                    'storage': {
+                      'etcd': {
+                        'peerAddress': all_ips[0],
+                      },
+                    },
+                  }
+                }, recursive=True)
+              | to_nice_yaml }}
+        dest: "/root/.k0s/k0s.yaml"
+        owner: root
+        mode: '0644'
+    - name: Start k0s controller service
+      become: true
+      systemd:
+        name: "k0scontroller"
+        state: "started"
+    - name: Save kubeconfig
+      become: true
+      shell: >-
+        k0s kubeconfig create root \
+          --groups 'system:masters' \
+          --config /root/.k0s/k0s.yaml > ~/.kube/config;
+    - name: Pull kubeconfig
+      become: true
+      slurp:
+        src: /root/.kube/config
+      register: kubeconfig
+    - name: Parse kubeconfig YAML to dict
+      set_fact:
+        kc: "{{ kubeconfig.content | b64decode | from_yaml }}"
+    - name: Update server field
+      set_fact:
+        kc: >-
+          {{ kc | combine({
+             'clusters': [
+               kc.clusters[0] | combine({
+                 'cluster': kc.clusters[0].cluster | combine({
+                   'server': 'https://archlinux:6443'
+                 })
+               })
+             ]
+           }, recursive=True) }}
+    - name: Save locally
+      copy:
+        dest: ~/.kube/config
+        content: "{{ kc | to_nice_yaml }}"
+      delegate_to: localhost
