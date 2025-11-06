@@ -4,6 +4,8 @@ gateway:
   namespace: envoy-gateway-system
 
 jellyfin:
+  image:
+    tag: "10.11"
   timezone: Asia/Calcutta
   volumes:
     - name: jellyfin-data

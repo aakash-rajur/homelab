@@ -124,7 +124,7 @@ spec:
       serviceAccountName: keel
       containers:
         - name: keel
-          image: "keelhq/keel:latest"
+          image: "keelhq/keel:0.20"
           imagePullPolicy: Always
           command: ["/bin/keel"]
           volumeMounts: []
