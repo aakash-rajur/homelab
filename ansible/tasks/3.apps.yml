@@ -52,3 +52,15 @@
         values_files:
           - "../apps/jellyfin/values.yaml"
       delegate_to: localhost
+    - name: Load keel env
+      import_tasks: "common/read_env.yml"
+      vars:
+        path: "../apps/keel/.envrc"
+    - name: Configure and install keel
+      kubernetes.core.k8s:
+        context: "k0s"
+        template:
+          - path: "../apps/keel/config.yaml"
+          - path: "../apps/keel/install.yaml"
+        state: present
+      delegate_to: localhost

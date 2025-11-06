@@ -4,21 +4,14 @@ kind: Namespace
 metadata:
   name: keel
 ---
-apiVersion: bitnami.com/v1alpha1
-kind: SealedSecret
+apiVersion: v1
+kind: Secret
 metadata:
-  creationTimestamp: null
   name: keel-credentials
   namespace: keel
-spec:
-  encryptedData:
-    PASSWORD: AgBXv27rn8kuTo3juSzZM8Cvi7L0RvhZ2R+Wk4oPnmLu12132aPv2WxpdkE3MWNOtNrHYt7+eiXGvneIxqpeKVIUx2/DaHsEznKY6Dk11sram0W2FNEeQYB57O+JzF8ZIzNvXPAb3xhjxJOVHE+BTHikA5u+dZys+LbuxVqOoUOD95r45GWw5cH7QCDWBFfnAcdpaurUOrzYh0cL6rwHULeKSaXgp5eDAXnTZZyVDZAXZ0wR3JdxGs6B5aMf9GS4HfyYpwpDoZARiaMX3Log7qVT+QpsihTBzDK37K1pBERE0y57o4VBJFzHg+Rt7goDDLq9I0dOmfn0ztluHabTLEk2XQtAjBBsu1mexJoo/Q9XG0o7Kn/quE/RR2e+UC4Bji72emTd3hwu/PaHqRnpTg43hlOMBF1Iu++1ygU5jnNExy5wDFDXxE6U6wdibw/anvBEWWQ/H5diPByDfhXmtcx1KPFeFUisCzSZlvoEp9TJeSwLOZx1OAbLTPuUMydgVnjS8IJv+dHO6p2zRZGnkyK5SvTSP8KM2Zi2GpkyES7FZXziM7GWv8bVVWpEVyxY7P+MlnyCjBB2WqqyIKsr3EvxZ3rmZqjfS16i3ZHFVx7fbmWicmVpijXcKs/IMCRLLEzhu+bQ4PQI+9BFX8XMOZBhc/ut54wSxHP7AOpgZuyKaZ/SIZlGQtEy5ZZ4Faof77U3TTImeEIfYFbocoG+0KNAoYbHgV5vRPlWmCkHkdXgbw==
-    USERNAME: AgACUtMVGt2HKUu3O55oIH3pXM8Vkhgg7aPmwCqoq2PP7f3Y4QtqdaZkPbnOcOg+FKUFtSlrBCjekK/iv7H2HewrSeipWbd4SdZ9RfQiWobtlZBWvY/GLDIihbcKLWXxwnsiDTsySGcs84+6SEk8Sob85uJt2QUErr97ojqdt3ZjN+7grjrxOk/LkNzr/vJkAZqdPrleDxGVyqTvNIQlVStd+jtPKvfT4BKCKUSfprzaL2/ze6JxkR8n+EEex+WPtH+FDDcg1lg8SLr7KrGA4rOYgJYXummQXmuQqbJ6ov8dEq0QKyxxxbaCZi7PE7/0bVPUvNE8TYr5oIz0rJCCVprcWuNtIBJG3OhD245aXG6WOJi5kApnDhkM96LAjVTYpkFhMTw2BSPiBJs8qyTTFKz/6YhAP6NsA+QlFdmjg8/ypM6jnQCLehQFSlz0hNa3flJgaBvopMPK0zYM1jzHUMRECPeSLVuqM8tCLuJctjiSzJHS+S+iT00PtQTEcvuLat2fd4j9IPRVoMSUYCPxu0f/5kCJIhmQcmSEGQ17hstuklZkqqsdZ3+Zl5FNh6E8LjwqA0jskhSIb5QWPqSCncXG/fxzlHagftJaOFuSTgf+jzFCUee04EhJU9zR9IRCeg/I2QcoXv3/ab4O96IpPENoqNX+6+INMfUTrWzb0jQ/f17q1PxQRI3DQeWHfKuQ0FHd/RhKkB8mv04hjts=
-  template:
-    metadata:
-      creationTimestamp: null
-      name: keel-credentials
-      namespace: keel
+data:
+  BASIC_AUTH_USER: "{{ KEEL_USERNAME | b64encode }}"
+  BASIC_AUTH_PASSWORD: "{{ KEEL_PASSWORD | b64encode }}"
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute

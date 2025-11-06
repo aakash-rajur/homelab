@@ -124,33 +124,26 @@ spec:
       serviceAccountName: keel
       containers:
         - name: keel
-          # Note that we use appVersion to get images tag.
           image: "keelhq/keel:latest"
           imagePullPolicy: Always
           command: ["/bin/keel"]
-          volumeMounts:
+          volumeMounts: []
           env:
-            - name: LOG_LEVEL
-              value: "DEBUG"
-            # Enable polling
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
             - name: POLL
               value: "true"
-            # Set default poll schedule
             - name: POLL_DEFAULTSCHEDULE
-              value: "@every 6h"
-            # Enable basic auth
-            - name: BASIC_AUTH_USER
-              valueFrom:
-                secretKeyRef:
-                  name: keel-credentials
-                  key: USERNAME
-            - name: BASIC_AUTH_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: keel-credentials
-                  key: PASSWORD
+              value: "@every 1h"
             - name: NOTIFICATION_LEVEL
               value: "info"
+            - name: DEBUG
+              value: "true"
+          envFrom:
+            - secretRef:
+                name: keel-credentials
           ports:
             - containerPort: 9300
           livenessProbe:
