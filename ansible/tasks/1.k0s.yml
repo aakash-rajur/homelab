@@ -46,7 +46,12 @@
         dest: "/root/.k0s/k0s.yaml"
         owner: root
         mode: '0644'
-    - name: Start k0s controller service
+    - name: Copy K0s systemd unit file
+      become: true
+      template:
+        src: "files/k0scontroller.service"
+        dest: "/etc/systemd/system/k0scontroller.service"
+    - name: Start K0s controller service
       become: true
       systemd:
         name: "k0scontroller"
