@@ -4,6 +4,8 @@ gateway:
   namespace: envoy-gateway-system
 
 transmission:
+  image:
+    tag: "4.0.6"
   credentials:
     user:
       secretKeyRef:
@@ -21,6 +23,8 @@ transmission:
       mountPath: /downloads
 
 sabnzbd:
+  image:
+    tag: "4.5.5"
   credentials:
     user:
       secretKeyRef:
