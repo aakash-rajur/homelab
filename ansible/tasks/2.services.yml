@@ -2,7 +2,7 @@
   block:
     - name: Install MetalLB
       kubernetes.core.k8s:
-        context: "k0s"
+        context: "archlinux"
         src: "{{ item }}"
         state: present
       delegate_to: localhost
@@ -11,7 +11,7 @@
         - "../services/gateway/metallb/config.yaml"
     - name: Install Envoy Gateway
       kubernetes.core.k8s:
-        context: "k0s"
+        context: "archlinux"
         src: "{{ item }}"
         state: present
       delegate_to: localhost
@@ -24,14 +24,14 @@
         path: "../services/cloudflare/.envrc"
     - name: Configure cloudflare tunnel
       kubernetes.core.k8s:
-        context: "k0s"
+        context: "archlinux"
         template:
           - path: "../services/cloudflare/config.yaml"
         state: present
       delegate_to: localhost
     - name: Install cloudflare tunnel
       kubernetes.core.helm:
-        context: "k0s"
+        context: "archlinux"
         name: "cloudflare-tunnel-remote"
         chart_ref: "../charts/cloudflare-tunnel-remote"
         release_namespace: cloudflare

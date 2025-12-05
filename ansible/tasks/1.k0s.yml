@@ -74,16 +74,57 @@
       set_fact:
         kc: >-
           {{ kc | combine({
-             'clusters': [
-               kc.clusters[0] | combine({
-                 'cluster': kc.clusters[0].cluster | combine({
-                   'server': 'https://archlinux:6443'
-                 })
-               })
-             ]
+            'clusters': [
+              kc.clusters[0] | combine({
+                'cluster': kc.clusters[0].cluster | combine({
+                  'server': 'https://archlinux:6443'
+                }),
+               'name': 'archlinux'
+              }),
+            ],
+            'contexts': [
+              kc.contexts[0] | combine({
+                'context': kc.contexts[0].context | combine({
+                  'cluster': 'archlinux',
+                  'user': 'archlinux'
+                }),
+                'name': 'archlinux'
+              })
+            ],
+            'users': [
+              kc.users[0] | combine({
+                'name': 'archlinux'
+              })
+            ],
+            'current-context': 'archlinux'
            }, recursive=True) }}
     - name: Save locally
       copy:
-        dest: ~/.kube/config
+        dest: ~/.kube/archlinux.yaml
         content: "{{ kc | to_nice_yaml }}"
+      delegate_to: localhost
+    - name: Check kubemerge installed
+      command: "which kubemerge"
+      register: check_kubemerge
+      ignore_errors: true
+      delegate_to: localhost
+    - name: Find all k8s configs
+      find:
+        paths: ~/.kube
+        patterns:
+          - "*.yml"
+          - "*.yaml"
+        excludes:
+          - "config"
+        file_type: file
+      register: k8s_manifests
+      delegate_to: localhost
+      when: check_kubemerge.rc == 0
+    - name: Merge manifests
+      shell: >
+        kubemerge \
+        {% for f in k8s_manifests.files %}
+          -i {{ f.path }} \
+        {% endfor %}
+        -o ~/.kube/config -c archlinux
       delegate_to: localhost
