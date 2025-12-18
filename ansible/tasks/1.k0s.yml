@@ -100,7 +100,7 @@
            }, recursive=True) }}
     - name: Save locally
       copy:
-        dest: ~/.kube/archlinux.yaml
+        dest: ~/.kube/archlinux.yml
         content: "{{ kc | to_nice_yaml }}"
       delegate_to: localhost
     - name: Check kubemerge installed

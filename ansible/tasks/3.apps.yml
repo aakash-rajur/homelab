@@ -3,22 +3,22 @@
     - name: Load torrent client env
       import_tasks: "common/read_env.yml"
       vars:
-        path: "../apps/torrent-clients/.envrc"
-    - name: Configure torrent client
+        path: "../apps/torrent/.envrc"
+    - name: Configure torrent
       kubernetes.core.k8s:
         context: "archlinux"
         template:
-          - path: "../apps/torrent-clients/config.yaml"
+          - path: "../apps/torrent/config.yaml"
         state: present
       delegate_to: localhost
     - name: Install torrent clients
       kubernetes.core.helm:
         context: "archlinux"
-        name: "torrent-clients"
-        chart_ref: "../charts/torrent-clients"
-        release_namespace: torrent-clients
+        name: "torrent"
+        chart_ref: "../charts/torrent"
+        release_namespace: torrent
         values_files:
-          - "../apps/torrent-clients/values.yaml"
+          - "../apps/torrent/values.yaml"
       delegate_to: localhost
     - name: Configure servarr
       kubernetes.core.k8s:

@@ -1,23 +1,26 @@
 - name: Install services
   block:
-    - name: Install MetalLB
+    - name: Add haproxy chart repo
+      kubernetes.core.helm_repository:
+        name: haproxy-ingress
+        repo_url: "https://haproxy-ingress.github.io/charts"
+    - name: Install haproxy ingress
+      kubernetes.core.helm:
+        context: "archlinux"
+        name: "haproxy-ingress"
+        chart_ref: "haproxy-ingress/haproxy-ingress"
+        release_namespace: haproxy
+        values_files:
+          - "../services/gateway/haproxy/values.yaml"
+    - name: Install gateway resources
       kubernetes.core.k8s:
         context: "archlinux"
         src: "{{ item }}"
         state: present
       delegate_to: localhost
       loop:
-        - "../services/gateway/metallb/install.yaml"
-        - "../services/gateway/metallb/config.yaml"
-    - name: Install Envoy Gateway
-      kubernetes.core.k8s:
-        context: "archlinux"
-        src: "{{ item }}"
-        state: present
-      delegate_to: localhost
-      loop:
-        - "../services/gateway/envoy/install.yaml"
-        - "../services/gateway/envoy/config.yaml"
+        - "https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/experimental-install.yaml"
+        - "../services/gateway/haproxy/config.yaml"
     - name: Load cloudflare env
       import_tasks: "common/read_env.yml"
       vars:
@@ -32,8 +35,8 @@
     - name: Install cloudflare tunnel
       kubernetes.core.helm:
         context: "archlinux"
-        name: "cloudflare-tunnel-remote"
-        chart_ref: "../charts/cloudflare-tunnel-remote"
+        name: "cloudflare-tunnel"
+        chart_ref: "../charts/cloudflare-tunnel"
         release_namespace: cloudflare
         values_files:
           - "../services/cloudflare/values.yaml"
