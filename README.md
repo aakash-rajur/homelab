@@ -39,10 +39,9 @@ setup for personal homelab
 
 ### gateway
 
-1. install [metallb](https://metallb.io/installation/#installation-by-manifest)
-2. configure metallb with manifest in [metallb/config.yaml](services/gateway/metallb/config.yaml)
-3. install [envoy](https://gateway.envoyproxy.io/docs/install/install-yaml/)
-4. configure envoy with manifest in [envoy/config.yaml](services/gateway/envoy/config.yaml)
+1. install [cilium](https://docs.cilium.io/en/latest/installation/k0s/)
+2. install [haproxy-ingress](https://haproxy-ingress.github.io/docs/getting-started/)
+3configure gateway with manifest in [here](https://haproxy-ingress.github.io/docs/configuration/gateway-api/)
 
 ### sealed secrets
 
@@ -72,7 +71,7 @@ setup for personal homelab
 
 ### transmission and sabnzbd
 
-1. [charts/torrent-clients](charts/torrent-clients) deploy transmission and sabnzbd
+1. [charts/torrent](charts/torrent) deploy transmission and sabnzbd
 2. we're generating sabnzbd.ini from secrets through init containers before booting
 3. all credentials are configured through sealed secrets
 
@@ -90,4 +89,4 @@ setup for personal homelab
 
 ### cloudflare tunnel
 1. all traffic is exposed through http routes attached to [primary-gateway](services/gateway/envoy/config.yaml)
-2. [cloudflare tunnel](charts/cloudflare-tunnel-remote) forwards traffic to [primary-gateway](services/gateway/envoy/config.yaml)
+2. [cloudflare tunnel](charts/cloudflare-tunnel) forwards traffic to [primary-gateway](services/gateway/envoy/config.yaml)
