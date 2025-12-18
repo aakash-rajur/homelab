@@ -1,5 +1,5 @@
 apiVersion: v2
-name: cloudflare-tunnel-remote
+name: cloudflare-tunnel
 description: Deployment of a remotely managed tunnel that has already been provisioned in Cloudflare
 
 # A chart can be either an 'application' or a 'library' chart.

@@ -5,7 +5,7 @@ metadata:
   name: sabnzbd
   labels:
     app.kubernetes.io/app: sabnzbd
-    {{- include "torrent-clients.labels" . | nindent 4 }}
+    {{- include "torrent.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.sabnzbd.service.type }}
   ports:
@@ -15,7 +15,7 @@ spec:
       name: http
   selector:
     app.kubernetes.io/app: sabnzbd
-    {{- include "torrent-clients.selectorLabels" . | nindent 4 }}
+    {{- include "torrent.selectorLabels" . | nindent 4 }}
 {{- if .Values.gateway.name }}
 ---
 apiVersion: gateway.networking.k8s.io/v1

@@ -1,7 +1,7 @@
 rootDomain: dexterslab.cc
 gateway:
   name: "primary-gateway"
-  namespace: envoy-gateway-system
+  namespace: haproxy
 
 jellyfin:
   image:
@@ -48,5 +48,5 @@ podSecurityContext:
   runAsUser: 1000
   runAsGroup: 1000
   fsGroup: 1000
-  supplementaryGroups:
+  supplementalGroups:
     - 988

@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: sabnzbd-ini-template
   labels:
-    {{- include "torrent-clients.labels" . | nindent 4 }}
+    {{- include "torrent.labels" . | nindent 4 }}
 data:
   sabnzbd.ini: |-
     {{- tpl (.Files.Get "sabnzbd.ini") . | nindent 4 }}

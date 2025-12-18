@@ -1,7 +1,7 @@
 rootDomain: dexterslab.cc
 gateway:
   name: "primary-gateway"
-  namespace: envoy-gateway-system
+  namespace: haproxy
 
 transmission:
   image:
@@ -9,11 +9,11 @@ transmission:
   credentials:
     user:
       secretKeyRef:
-        name: torrent-client-credentials
+        name: torrent-credentials
         key: USERNAME
     password:
       secretKeyRef:
-        name: torrent-client-credentials
+        name: torrent-credentials
         key: PASSWORD
   timezone: Asia/Calcutta
   volumeMounts:
@@ -28,15 +28,15 @@ sabnzbd:
   credentials:
     user:
       secretKeyRef:
-        name: torrent-client-credentials
+        name: torrent-credentials
         key: USERNAME
     password:
       secretKeyRef:
-        name: torrent-client-credentials
+        name: torrent-credentials
         key: PASSWORD
     apiKey:
       secretKeyRef:
-        name: torrent-client-credentials
+        name: torrent-credentials
         key: SABNZBD_API_KEY
   timezone: Asia/Calcutta
   volumeMounts:
@@ -52,19 +52,19 @@ sabnzbd:
     - host: eunews.frugalusenet.com
       port: 563
       secretKeyRef:
-        name: "torrent-client-credentials"
+        name: "torrent-credentials"
         usernameKey: "NZB_USERNAME"
         passwordKey: "NZB_PASSWORD"
     - host: asnews.frugalusenet.com
       port: 563
       secretKeyRef:
-        name: "torrent-client-credentials"
+        name: "torrent-credentials"
         usernameKey: "NZB_USERNAME"
         passwordKey: "NZB_PASSWORD"
     - host: aunews.frugalusenet.com
       port: 563
       secretKeyRef:
-        name: "torrent-client-credentials"
+        name: "torrent-credentials"
         usernameKey: "NZB_USERNAME"
         passwordKey: "NZB_PASSWORD"
 

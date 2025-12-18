@@ -21,7 +21,7 @@ metadata:
 spec:
   parentRefs:
     - name: primary-gateway
-      namespace: envoy-gateway-system
+      namespace: haproxy
   hostnames:
     - "keel.dexterslab.cc"
   rules:

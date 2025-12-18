@@ -27,7 +27,7 @@ metadata:
 spec:
   parentRefs:
     - name: primary-gateway
-      namespace: envoy-gateway-system
+      namespace: haproxy
   hostnames:
     - "pihole.dexterslab.cc"
   rules:
@@ -50,7 +50,7 @@ metadata:
 spec:
   parentRefs:
     - name: primary-gateway
-      namespace: envoy-gateway-system
+      namespace: haproxy
   rules:
     - backendRefs:
         - name: pihole-dns
@@ -65,7 +65,7 @@ metadata:
 spec:
   parentRefs:
     - name: primary-gateway
-      namespace: envoy-gateway-system
+      namespace: haproxy
   rules:
     - backendRefs:
         - name: pihole-dns
