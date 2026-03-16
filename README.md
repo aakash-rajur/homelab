@@ -41,7 +41,7 @@ setup for personal homelab
 
 1. install [cilium](https://docs.cilium.io/en/latest/installation/k0s/)
 2. install [haproxy-ingress](https://haproxy-ingress.github.io/docs/getting-started/)
-3configure gateway with manifest in [here](https://haproxy-ingress.github.io/docs/configuration/gateway-api/)
+configure gateway with manifest in [here](https://haproxy-ingress.github.io/docs/configuration/gateway-api/)
 
 ### sealed secrets
 

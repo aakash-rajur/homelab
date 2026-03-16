@@ -3,6 +3,7 @@ apiVersion: "cilium.io/v2"
 kind: CiliumLoadBalancerIPPool
 metadata:
   name: "blue-pool"
+  namespace: kube-system
 spec:
   blocks:
     - cidr: "10.0.10.0/24"
