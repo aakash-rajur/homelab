@@ -13,6 +13,7 @@
         release_namespace: haproxy
         values_files:
           - "../services/gateway/haproxy/values.yaml"
+      delegate_to: localhost
     - name: Install gateway resources
       kubernetes.core.k8s:
         context: "archlinux"
