@@ -7,7 +7,7 @@ transmission:
   image:
     repository: lscr.io/linuxserver/transmission
     pullPolicy: IfNotPresent
-    tag: "latest"
+    tag: "4.1.3"
   timezone: Etc/UTC
   credentials:
     user:
@@ -45,7 +45,7 @@ sabnzbd:
   image:
     repository: lscr.io/linuxserver/sabnzbd
     pullPolicy: IfNotPresent
-    tag: "latest"
+    tag: "5.0.4"
   timezone: Etc/UTC
   credentials:
     user:

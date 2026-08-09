@@ -7,7 +7,7 @@ jellyfin:
   image:
     repository: jellyfin/jellyfin
     pullPolicy: IfNotPresent
-    tag: "latest"
+    tag: "10.11.11"
   workingDir: /home/jellyfin
   timezone: Etc/UTC
   replicaCount: 1
@@ -31,9 +31,9 @@ jellyfin:
 
 jellyseerr:
   image:
-    repository: fallenbagel/jellyseerr
+    repository: ghcr.io/seerr-team/seerr
     pullPolicy: IfNotPresent
-    tag: "latest"
+    tag: "v3.4.1"
   workingDir: /home/jellyseerr
   timezone: Etc/UTC
   replicaCount: 1
@@ -46,17 +46,19 @@ jellyseerr:
     livenessProbe:
       exec:
         command:
-          - "nc"
-          - "-z"
-          - "localhost"
-          - "5055"
+          - "wget"
+          - "--no-verbose"
+          - "--tries=1"
+          - "--spider"
+          - "http://localhost:5055/api/v1/status"
     readinessProbe:
       exec:
         command:
-          - "nc"
-          - "-z"
-          - "localhost"
-          - "5055"
+          - "wget"
+          - "--no-verbose"
+          - "--tries=1"
+          - "--spider"
+          - "http://localhost:5055/api/v1/status"
   securityContext: {}
   volumes: []
   volumeMounts: []
