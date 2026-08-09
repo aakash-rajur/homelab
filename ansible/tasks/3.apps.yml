@@ -14,6 +14,7 @@
     - name: Install torrent clients
       kubernetes.core.helm:
         context: "archlinux"
+        force_conflicts: true
         name: "torrent"
         chart_ref: "../charts/torrent"
         release_namespace: torrent
@@ -30,6 +31,7 @@
     - name: Install servarr
       kubernetes.core.helm:
         context: "archlinux"
+        force_conflicts: true
         name: "servarr"
         chart_ref: "../charts/servarr"
         release_namespace: servarr
@@ -46,6 +48,7 @@
     - name: Install jellyfin
       kubernetes.core.helm:
         context: "archlinux"
+        force_conflicts: true
         name: "jellyfin"
         chart_ref: "../charts/jellyfin"
         release_namespace: jellyfin
