@@ -5,7 +5,7 @@ gateway:
 
 transmission:
   image:
-    tag: "4.0.6"
+    tag: "4.1.3"
   credentials:
     user:
       secretKeyRef:
@@ -24,7 +24,7 @@ transmission:
 
 sabnzbd:
   image:
-    tag: "4.5.5"
+    tag: "5.0.4"
   credentials:
     user:
       secretKeyRef:

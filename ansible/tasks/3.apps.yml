@@ -14,6 +14,7 @@
     - name: Install torrent clients
       kubernetes.core.helm:
         context: "archlinux"
+        server_side: true
         force_conflicts: true
         name: "torrent"
         chart_ref: "../charts/torrent"
@@ -31,6 +32,7 @@
     - name: Install servarr
       kubernetes.core.helm:
         context: "archlinux"
+        server_side: true
         force_conflicts: true
         name: "servarr"
         chart_ref: "../charts/servarr"
@@ -48,6 +50,7 @@
     - name: Install jellyfin
       kubernetes.core.helm:
         context: "archlinux"
+        server_side: true
         force_conflicts: true
         name: "jellyfin"
         chart_ref: "../charts/jellyfin"

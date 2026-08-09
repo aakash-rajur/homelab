@@ -5,7 +5,7 @@ gateway:
 
 jellyfin:
   image:
-    tag: "10.11"
+    tag: "10.11.11"
   timezone: Asia/Calcutta
   volumes:
     - name: jellyfin-data

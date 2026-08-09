@@ -5,7 +5,7 @@ gateway:
 
 prowlarr:
   image:
-    tag: "2.3.0"
+    tag: "2.5.2"
   timezone: Asia/Calcutta
   volumes:
     - name: prowlarr-config
@@ -18,7 +18,7 @@ prowlarr:
 
 radarr:
   image:
-    tag: "6.0.4"
+    tag: "6.3.0"
   timezone: Asia/Calcutta
   volumes:
     - name: radarr-config
@@ -39,7 +39,7 @@ radarr:
 
 sonarr:
   image:
-    tag: "4.0.16"
+    tag: "4.0.19"
   timezone: Asia/Calcutta
   volumes:
     - name: sonarr-config
@@ -60,7 +60,7 @@ sonarr:
 
 bazarr:
   image:
-    tag: "1.5.3"
+    tag: "1.6.0"
   timezone: Asia/Calcutta
   volumes:
     - name: bazarr-config
