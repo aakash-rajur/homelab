@@ -2,14 +2,14 @@
   block:
     - name: Add haproxy chart repo
       kubernetes.core.helm_repository:
-        name: haproxy-ingress
-        repo_url: "https://haproxy-ingress.github.io/charts"
+        name: haproxytech
+        repo_url: "https://haproxytech.github.io/helm-charts"
       delegate_to: localhost
     - name: Install haproxy ingress
       kubernetes.core.helm:
         context: "archlinux"
-        name: "haproxy-ingress"
-        chart_ref: "haproxy-ingress/haproxy-ingress"
+        name: "haproxy-unified-gateway"
+        chart_ref: "haproxytech/haproxy-unified-gateway"
         release_namespace: haproxy
         values_files:
           - "../services/gateway/haproxy/values.yaml"
@@ -21,7 +21,7 @@
         state: present
       delegate_to: localhost
       loop:
-        - "https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/experimental-install.yaml"
+        - "https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.5.0/experimental-install.yaml"
         - "../services/gateway/haproxy/config.yaml"
     - name: Load cloudflare env
       import_tasks: "common/read_env.yml"

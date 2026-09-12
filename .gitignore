@@ -3,3 +3,4 @@ example-*.yaml
 .envrc
 .envrc.*
 .idea
+playground
